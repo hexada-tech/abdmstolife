@@ -6,7 +6,6 @@
     <title>My Free GitHub Site</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
@@ -111,6 +110,36 @@
         .submenu a:hover .fa-telegram { color: #229ED9; }
         .submenu a:hover .fa-youtube { color: #FF0000; }
         .submenu a:hover .fa-discord { color: #5865F2; }
+
+        /* ---- NEW: REDIRECT MODAL STYLES ---- */
+        .redirect-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 9999;
+        }
+        .redirect-modal.active { opacity: 1; visibility: visible; }
+        .redirect-box {
+            background: white; padding: 40px; border-radius: 16px; text-align: center;
+            max-width: 400px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(20px); transition: all 0.3s ease;
+        }
+        .redirect-modal.active .redirect-box { transform: translateY(0); }
+        .redirect-box h3 { color: var(--text-main); margin-top: 0; font-size: 1.5rem; }
+        .redirect-box p { color: var(--text-muted); font-size: 1.1rem; }
+        .progress-container {
+            width: 100%; height: 12px; background: #e2e8f0; border-radius: 10px;
+            margin: 25px 0; overflow: hidden; position: relative;
+        }
+        .progress-bar {
+            height: 100%; width: 0%; background: var(--primary-color);
+            border-radius: 10px; transition: width 1s linear;
+        }
+        .cancel-btn {
+            background: #ef4444; color: white; border: none; padding: 10px 20px;
+            border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .cancel-btn:hover { background: #dc2626; }
     </style>
 </head>
 <body>
@@ -136,6 +165,17 @@
 
     <div id="blog-container">
         <p style="text-align: center;">Loading posts...</p>
+    </div>
+
+    <div class="redirect-modal" id="redirectModal">
+        <div class="redirect-box">
+            <h3>Leaving so soon?</h3>
+            <p>Opening link in <strong id="countdownText" style="color: var(--primary-color); font-size: 1.3rem;">10</strong> seconds...</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <button class="cancel-btn" id="cancelBtn">Cancel Redirect</button>
+        </div>
     </div>
 
     <script>
@@ -195,6 +235,62 @@
         }
 
         loadPosts();
+
+        // ---- NEW: 10 SECOND REDIRECT LOGIC ----
+        const redirectModal = document.getElementById('redirectModal');
+        const countdownText = document.getElementById('countdownText');
+        const progressBar = document.getElementById('progressBar');
+        const cancelBtn = document.getElementById('cancelBtn');
+        
+        let redirectTimer;
+        let countdownInterval;
+
+        // Listen for ANY click on the website
+        document.body.addEventListener('click', function(e) {
+            // Find if a link (<a> tag) was clicked
+            const link = e.target.closest('a');
+            
+            // If it is a real link (not an empty "#" link for menus)
+            if (link && link.getAttribute('href') && link.getAttribute('href') !== '#') {
+                e.preventDefault(); // Stop them from leaving immediately
+                
+                const targetUrl = link.href;
+                let timeLeft = 10;
+                
+                // Reset the modal visuals
+                countdownText.innerText = timeLeft;
+                progressBar.style.transition = 'none';
+                progressBar.style.width = '0%';
+                
+                // Force a browser refresh to restart the CSS animation smoothly
+                void progressBar.offsetWidth; 
+                
+                // Show modal and start animation
+                redirectModal.classList.add('active');
+                progressBar.style.transition = 'width 10s linear';
+                progressBar.style.width = '100%';
+                
+                // Update the countdown number every 1 second
+                countdownInterval = setInterval(() => {
+                    timeLeft--;
+                    countdownText.innerText = timeLeft;
+                }, 1000);
+                
+                // Actually open the new tab after 10 seconds (10000ms)
+                redirectTimer = setTimeout(() => {
+                    clearInterval(countdownInterval);
+                    redirectModal.classList.remove('active');
+                    window.open(targetUrl, '_blank'); // Opens link in new tab
+                }, 10000);
+            }
+        });
+
+        // Cancel Button Logic
+        cancelBtn.addEventListener('click', () => {
+            clearTimeout(redirectTimer);
+            clearInterval(countdownInterval);
+            redirectModal.classList.remove('active');
+        });
     </script>
 </body>
 </html>
