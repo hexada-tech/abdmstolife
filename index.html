@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Free GitHub Site</title>
     
-    <!-- Importing FontAwesome for Professional Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Modern Color Variables */
         :root {
             --primary-color: #3b82f6;
             --bg-color: #f8fafc;
@@ -19,7 +17,6 @@
             --menu-hover: #f1f5f9;
         }
 
-        /* Base Body Styles */
         body { 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             text-align: center; 
@@ -27,10 +24,31 @@
             background: var(--bg-color); 
             color: var(--text-main);
             margin: 0;
-            overflow-x: hidden; /* Prevents horizontal scrolling */
+            overflow-x: hidden;
         }
-        h1 { color: var(--text-main); font-size: 2.5rem; margin-top: 15vh; }
+        h1 { color: var(--text-main); font-size: 2.5rem; margin-top: 5vh; }
         p { color: var(--text-muted); font-size: 1.2rem; }
+
+        /* Blog Post Styles */
+        #blog-container {
+            max-width: 700px;
+            margin: 40px auto;
+            text-align: left;
+        }
+        .post-card {
+            background: #ffffff;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+        .post-card:hover {
+            transform: translateY(-3px);
+        }
+        .post-card h2 { margin-top: 0; color: var(--primary-color); margin-bottom: 5px; }
+        .post-card small { color: #94a3b8; font-weight: 600; display: block; margin-bottom: 15px; }
+        .post-card p { color: var(--text-main); font-size: 1.05rem; line-height: 1.6; margin: 0; }
 
         /* Floating Menu Button */
         .menu-btn {
@@ -52,102 +70,20 @@
             align-items: center;
             justify-content: center;
         }
-        .menu-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
+        .menu-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); }
 
-        /* Dark Overlay for Background */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(3px);
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.4s ease;
-            z-index: 998;
-        }
-        .overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Right Sidebar Menu */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -350px; /* Hidden off-screen initially */
-            width: 300px;
-            height: 100vh;
-            background: var(--menu-bg);
-            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 999;
-            padding-top: 100px;
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar.active {
-            right: 0; /* Slides in */
-        }
-
-        /* Main Menu Items */
-        .menu-item {
-            padding: 18px 30px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            border-bottom: 1px solid #e2e8f0;
-            transition: background 0.2s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .menu-item:hover {
-            background: var(--menu-hover);
-        }
-
-        /* Submenu Container */
-        .submenu {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-            background: #f8fafc;
-        }
-        .submenu.active {
-            max-height: 400px; /* Expands to show links */
-        }
-
-        /* Social Media Links inside Submenu */
-        .submenu a {
-            display: flex;
-            align-items: center;
-            padding: 15px 30px 15px 50px;
-            text-decoration: none;
-            color: var(--text-muted);
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .submenu a i {
-            margin-right: 15px;
-            font-size: 1.3rem;
-            width: 25px;
-            text-align: center;
-            transition: color 0.3s ease;
-        }
-        
-        /* Hover Effects and Brand Colors */
-        .submenu a:hover {
-            background: #e2e8f0;
-            color: var(--text-main);
-            padding-left: 55px; /* Slight slide effect on hover */
-        }
+        /* Overlays and Sidebars */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: 0.4s ease; z-index: 998; }
+        .overlay.active { opacity: 1; visibility: visible; }
+        .sidebar { position: fixed; top: 0; right: -350px; width: 300px; height: 100vh; background: var(--menu-bg); box-shadow: -5px 0 25px rgba(0,0,0,0.1); transition: right 0.4s ease; z-index: 999; padding-top: 100px; text-align: left; display: flex; flex-direction: column; }
+        .sidebar.active { right: 0; }
+        .menu-item { padding: 18px 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .menu-item:hover { background: var(--menu-hover); }
+        .submenu { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #f8fafc; }
+        .submenu.active { max-height: 400px; }
+        .submenu a { display: flex; align-items: center; padding: 15px 30px 15px 50px; text-decoration: none; color: var(--text-muted); font-size: 1rem; font-weight: 500; transition: all 0.3s ease; }
+        .submenu a i { margin-right: 15px; font-size: 1.3rem; width: 25px; text-align: center; }
+        .submenu a:hover { background: #e2e8f0; color: var(--text-main); padding-left: 55px; }
         .submenu a:hover .fa-facebook { color: #1877F2; }
         .submenu a:hover .fa-telegram { color: #229ED9; }
         .submenu a:hover .fa-youtube { color: #FF0000; }
@@ -156,39 +92,31 @@
 </head>
 <body>
 
-    <!-- Floating Action Button -->
-    <button class="menu-btn" id="menuBtn" title="Open Menu">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-
-    <!-- Background Dark Overlay -->
+    <button class="menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
     <div class="overlay" id="overlay"></div>
 
-    <!-- The Slide-out Sidebar -->
     <nav class="sidebar" id="sidebar">
-        <!-- Social Media Toggle Button -->
         <div class="menu-item" id="socialToggle">
             <span><i class="fa-solid fa-share-nodes" style="margin-right: 12px;"></i>Social Media</span>
             <i class="fa-solid fa-chevron-down" id="chevron" style="transition: transform 0.3s;"></i>
         </div>
-        
-        <!-- Dropdown Links -->
         <div class="submenu" id="socialSubmenu">
-            <!-- Replace the '#' in href with your actual profile links -->
-            <a href="#" target="_blank"><i class="fa-brands fa-facebook"></i> Facebook</a>
-            <a href="#" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a>
-            <a href="#" target="_blank"><i class="fa-brands fa-youtube"></i> YouTube</a>
-            <a href="#" target="_blank"><i class="fa-brands fa-discord"></i> Discord</a>
+            <a href="#"><i class="fa-brands fa-facebook"></i> Facebook</a>
+            <a href="#"><i class="fa-brands fa-telegram"></i> Telegram</a>
+            <a href="#"><i class="fa-brands fa-youtube"></i> YouTube</a>
+            <a href="#"><i class="fa-brands fa-discord"></i> Discord</a>
         </div>
     </nav>
 
-    <!-- Website Body Content -->
-    <h1>Hello World!</h1>
-    <p>My GitHub Pages site is officially live with a professional UI.</p>
+    <h1>My Blog</h1>
+    <p>Latest updates and posts</p>
 
-    <!-- Interactivity Script -->
+    <div id="blog-container">
+        <p style="text-align: center;">Loading posts...</p>
+    </div>
+
     <script>
-        // Get elements from the HTML
+        // --- 1. UI Menu Logic ---
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
@@ -196,39 +124,53 @@
         const socialSubmenu = document.getElementById('socialSubmenu');
         const chevron = document.getElementById('chevron');
 
-        // Function to open/close the entire sidebar menu
         function toggleMenu() {
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
-            
-            // Swap between hamburger (bars) and close (xmark) icon
             if (sidebar.classList.contains('active')) {
                 menuBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
             } else {
                 menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
-                // Automatically close the dropdown when sidebar closes
                 socialSubmenu.classList.remove('active');
                 chevron.style.transform = 'rotate(0deg)';
             }
         }
-
-        // Click listeners for the main button and the dark background
         menuBtn.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
-
-        // Function to expand/collapse the Social Media list
         socialToggle.addEventListener('click', () => {
             socialSubmenu.classList.toggle('active');
-            
-            // Rotate the small arrow icon
-            if (socialSubmenu.classList.contains('active')) {
-                chevron.style.transform = 'rotate(180deg)';
-            } else {
-                chevron.style.transform = 'rotate(0deg)';
-            }
+            chevron.style.transform = socialSubmenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
         });
+
+        // --- 2. JSON Fetch Logic ---
+        async function loadPosts() {
+            try {
+                // Fetch the posts.json file we created
+                const response = await fetch('posts.json');
+                const posts = await response.json();
+                
+                const container = document.getElementById('blog-container');
+                container.innerHTML = ''; // Remove the "Loading..." text
+
+                // Loop through each post and create a beautiful card for it
+                posts.forEach(post => {
+                    const postCard = `
+                        <div class="post-card">
+                            <h2>${post.title}</h2>
+                            <small>${post.date}</small>
+                            <p>${post.content}</p>
+                        </div>
+                    `;
+                    container.innerHTML += postCard;
+                });
+            } catch (error) {
+                document.getElementById('blog-container').innerHTML = '<p style="color: red;">Failed to load posts. Make sure posts.json exists!</p>';
+                console.error('Error fetching posts:', error);
+            }
+        }
+
+        // Run the fetch function when the page loads
+        loadPosts();
     </script>
 </body>
 </html>
-
-```
