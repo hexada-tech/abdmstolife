@@ -7,6 +7,8 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <style>
         :root {
             --primary-color: #3b82f6;
@@ -27,52 +29,73 @@
             overflow-x: hidden;
         }
         h1 { color: var(--text-main); font-size: 2.5rem; margin-top: 5vh; }
-        p { color: var(--text-muted); font-size: 1.2rem; }
+        p.subtitle { color: var(--text-muted); font-size: 1.2rem; }
 
-        /* Blog Post Styles */
+        /* Blog Post Container */
         #blog-container {
             max-width: 700px;
             margin: 40px auto;
             text-align: left;
         }
+        
+        /* Post Card Base */
         .post-card {
             background: #ffffff;
-            padding: 25px;
-            margin-bottom: 25px;
-            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 16px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             transition: transform 0.2s ease;
         }
-        .post-card:hover {
-            transform: translateY(-3px);
-        }
-        .post-card h2 { margin-top: 0; color: var(--primary-color); margin-bottom: 5px; }
-        .post-card small { color: #94a3b8; font-weight: 600; display: block; margin-bottom: 15px; }
-        .post-card p { color: var(--text-main); font-size: 1.05rem; line-height: 1.6; margin: 0; }
+        .post-card:hover { transform: translateY(-3px); }
+        .post-card h2 { margin-top: 0; color: var(--primary-color); margin-bottom: 5px; font-size: 1.8rem; }
+        .post-card small { color: #94a3b8; font-weight: 600; display: block; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
 
-        /* Floating Menu Button */
-        .menu-btn {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            background-color: var(--menu-bg);
-            border: none;
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            font-size: 22px;
-            color: var(--text-main);
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            z-index: 1000;
-            display: flex;
+        /* ---- RICH TEXT FORMATTING STYLES ---- */
+        .post-content { color: var(--text-main); font-size: 1.05rem; line-height: 1.7; }
+        .post-content h3 { color: #0f172a; margin-top: 25px; }
+        .post-content p { margin-bottom: 15px; }
+        .post-content ul { padding-left: 20px; margin-bottom: 15px; }
+        .post-content li { margin-bottom: 8px; }
+        .post-content blockquote { border-left: 4px solid var(--primary-color); background: #f1f5f9; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; font-style: italic; }
+        .post-content code { background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #ef4444; }
+        
+        /* Normal Links inside text */
+        .post-content a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+        .post-content a:hover { text-decoration: underline; }
+
+        /* THE MAGIC PRO UI BUTTON (Links on their own line) */
+        .post-content p > a:only-child {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+            margin: 15px 0;
+            width: fit-content;
         }
-        .menu-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); }
+        .post-content p > a:only-child:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+            text-decoration: none;
+        }
+        .post-content p > a:only-child::after {
+            content: '\f08e'; /* FontAwesome External Link Icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            margin-left: 10px;
+        }
+        /* ------------------------------------- */
 
-        /* Overlays and Sidebars */
+        /* Floating Menu & Sidebar (Same as before) */
+        .menu-btn { position: fixed; top: 25px; right: 25px; background-color: var(--menu-bg); border: none; border-radius: 50%; width: 55px; height: 55px; font-size: 22px; color: var(--text-main); cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .menu-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: 0.4s ease; z-index: 998; }
         .overlay.active { opacity: 1; visibility: visible; }
         .sidebar { position: fixed; top: 0; right: -350px; width: 300px; height: 100vh; background: var(--menu-bg); box-shadow: -5px 0 25px rgba(0,0,0,0.1); transition: right 0.4s ease; z-index: 999; padding-top: 100px; text-align: left; display: flex; flex-direction: column; }
@@ -109,14 +132,14 @@
     </nav>
 
     <h1>My Blog</h1>
-    <p>Latest updates and posts</p>
+    <p class="subtitle">Latest updates and formatted posts</p>
 
     <div id="blog-container">
         <p style="text-align: center;">Loading posts...</p>
     </div>
 
     <script>
-        // --- 1. UI Menu Logic ---
+        // UI Menu Logic
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
@@ -142,34 +165,35 @@
             chevron.style.transform = socialSubmenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
         });
 
-        // --- 2. JSON Fetch Logic ---
+        // JSON Fetch & Markdown Logic
         async function loadPosts() {
             try {
-                // Fetch the posts.json file we created
                 const response = await fetch('posts.json');
                 const posts = await response.json();
-                
                 const container = document.getElementById('blog-container');
-                container.innerHTML = ''; // Remove the "Loading..." text
+                container.innerHTML = ''; 
 
-                // Loop through each post and create a beautiful card for it
                 posts.forEach(post => {
+                    // Convert the Markdown text into beautiful HTML
+                    const formattedContent = marked.parse(post.content);
+
                     const postCard = `
                         <div class="post-card">
                             <h2>${post.title}</h2>
-                            <small>${post.date}</small>
-                            <p>${post.content}</p>
+                            <small><i class="fa-regular fa-calendar" style="margin-right: 5px;"></i> ${post.date}</small>
+                            <div class="post-content">
+                                ${formattedContent}
+                            </div>
                         </div>
                     `;
                     container.innerHTML += postCard;
                 });
             } catch (error) {
-                document.getElementById('blog-container').innerHTML = '<p style="color: red;">Failed to load posts. Make sure posts.json exists!</p>';
+                document.getElementById('blog-container').innerHTML = '<p style="color: red; text-align: center;">Failed to load posts. Make sure posts.json exists!</p>';
                 console.error('Error fetching posts:', error);
             }
         }
 
-        // Run the fetch function when the page loads
         loadPosts();
     </script>
 </body>
