@@ -1,16 +1,241 @@
+Here is the complete, updated code. I have replaced your basic `index.html` with a modern, "Pro UI" version.
+
+It includes a floating hamburger menu button on the top right. When clicked, a sleek sidebar slides in. Inside, there is an interactive "Social Media" dropdown with professional icons (using Font Awesome) that reveal Facebook, Telegram, YouTube, and Discord.
+
+Copy all of the code below and replace everything inside your `index.html` file on GitHub:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Free GitHub Site</title>
+    
+    <!-- Importing FontAwesome for Professional Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f4f4f9; }
-        h1 { color: #333; }
+        /* Modern Color Variables */
+        :root {
+            --primary-color: #3b82f6;
+            --bg-color: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --menu-bg: #ffffff;
+            --menu-hover: #f1f5f9;
+        }
+
+        /* Base Body Styles */
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            text-align: center; 
+            padding: 50px; 
+            background: var(--bg-color); 
+            color: var(--text-main);
+            margin: 0;
+            overflow-x: hidden; /* Prevents horizontal scrolling */
+        }
+        h1 { color: var(--text-main); font-size: 2.5rem; margin-top: 15vh; }
+        p { color: var(--text-muted); font-size: 1.2rem; }
+
+        /* Floating Menu Button */
+        .menu-btn {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background-color: var(--menu-bg);
+            border: none;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            font-size: 22px;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Dark Overlay for Background */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.4s ease;
+            z-index: 998;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Right Sidebar Menu */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -350px; /* Hidden off-screen initially */
+            width: 300px;
+            height: 100vh;
+            background: var(--menu-bg);
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            padding-top: 100px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar.active {
+            right: 0; /* Slides in */
+        }
+
+        /* Main Menu Items */
+        .menu-item {
+            padding: 18px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .menu-item:hover {
+            background: var(--menu-hover);
+        }
+
+        /* Submenu Container */
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: #f8fafc;
+        }
+        .submenu.active {
+            max-height: 400px; /* Expands to show links */
+        }
+
+        /* Social Media Links inside Submenu */
+        .submenu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 30px 15px 50px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .submenu a i {
+            margin-right: 15px;
+            font-size: 1.3rem;
+            width: 25px;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+        
+        /* Hover Effects and Brand Colors */
+        .submenu a:hover {
+            background: #e2e8f0;
+            color: var(--text-main);
+            padding-left: 55px; /* Slight slide effect on hover */
+        }
+        .submenu a:hover .fa-facebook { color: #1877F2; }
+        .submenu a:hover .fa-telegram { color: #229ED9; }
+        .submenu a:hover .fa-youtube { color: #FF0000; }
+        .submenu a:hover .fa-discord { color: #5865F2; }
     </style>
 </head>
 <body>
+
+    <!-- Floating Action Button -->
+    <button class="menu-btn" id="menuBtn" title="Open Menu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <!-- Background Dark Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- The Slide-out Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <!-- Social Media Toggle Button -->
+        <div class="menu-item" id="socialToggle">
+            <span><i class="fa-solid fa-share-nodes" style="margin-right: 12px;"></i>Social Media</span>
+            <i class="fa-solid fa-chevron-down" id="chevron" style="transition: transform 0.3s;"></i>
+        </div>
+        
+        <!-- Dropdown Links -->
+        <div class="submenu" id="socialSubmenu">
+            <!-- Replace the '#' in href with your actual profile links -->
+            <a href="#" target="_blank"><i class="fa-brands fa-facebook"></i> Facebook</a>
+            <a href="#" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a>
+            <a href="#" target="_blank"><i class="fa-brands fa-youtube"></i> YouTube</a>
+            <a href="#" target="_blank"><i class="fa-brands fa-discord"></i> Discord</a>
+        </div>
+    </nav>
+
+    <!-- Website Body Content -->
     <h1>Hello World!</h1>
-    <p>My GitHub Pages site is officially live.</p>
+    <p>My GitHub Pages site is officially live with a professional UI.</p>
+
+    <!-- Interactivity Script -->
+    <script>
+        // Get elements from the HTML
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const socialToggle = document.getElementById('socialToggle');
+        const socialSubmenu = document.getElementById('socialSubmenu');
+        const chevron = document.getElementById('chevron');
+
+        // Function to open/close the entire sidebar menu
+        function toggleMenu() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            // Swap between hamburger (bars) and close (xmark) icon
+            if (sidebar.classList.contains('active')) {
+                menuBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            } else {
+                menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+                // Automatically close the dropdown when sidebar closes
+                socialSubmenu.classList.remove('active');
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Click listeners for the main button and the dark background
+        menuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Function to expand/collapse the Social Media list
+        socialToggle.addEventListener('click', () => {
+            socialSubmenu.classList.toggle('active');
+            
+            // Rotate the small arrow icon
+            if (socialSubmenu.classList.contains('active')) {
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        });
+    </script>
 </body>
 </html>
+
+```
