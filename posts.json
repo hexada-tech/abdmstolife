@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Welcome to my new website!",
+    "date": "October 24, 2026",
+    "content": "This is my very first post using the JSON method. No HTML editing required!"
+  },
+  {
+    "title": "Learning GitHub Pages",
+    "date": "October 25, 2026",
+    "content": "It is amazing how easy it is to host a website for free. I am separating my data from my design."
+  }
+]
